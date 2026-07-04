@@ -1,0 +1,42 @@
+name: Execute
+
+permissions:
+  contents: write
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@master
+        with:
+          persist-credentials: false
+
+
+      - name: Download data
+        env:
+          SECRET_EMAIL: ${{ secrets.SECRET_EMAIL }}
+          SECRET_PASSWORD: ${{ secrets.SECRET_PASSWORD }}
+        run: |
+          TOKEN=$(curl -f --location \
+              --request POST \
+              'https://opendata.nationalrail.co.uk/authenticate' \
+              --header 'Content-Type: application/x-www-form-urlencoded' \
+              --data-urlencode "username=$EMAIL" \
+              --data-urlencode "password=$PASSWORD" | jq -r .token)
+
+          FNAME=$(curl --remote-name --remote-header-name \
+              --write-out '%{filename_effective}' \
+              --url 'https://opendata.nationalrail.co.uk/api/staticfeeds/2.0/fares' \
+              --header 'content-type: application/x-www-form-urlencoded' \
+              --header "x-auth-token: $TOKEN")
+  
+          echo ${FNAME%%.*} >> feedname
+          cat feedname
+          
