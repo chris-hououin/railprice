@@ -28,8 +28,8 @@ jobs:
               --request POST \
               'https://opendata.nationalrail.co.uk/authenticate' \
               --header 'Content-Type: application/x-www-form-urlencoded' \
-              --data-urlencode "username=SECRET_EMAIL" \
-              --data-urlencode "password=SECRET_PASSWORD" | jq -r .token)
+              --data-urlencode "username=$SECRET_EMAIL" \
+              --data-urlencode "password=$SECRET_PASSWORD" | jq -r .token)
 
           FNAME=$(curl --remote-name --remote-header-name \
               --write-out '%{filename_effective}' \
