@@ -44,7 +44,8 @@ jobs:
           echo ${FNAME%%.*} >> feedname
           cat feedname
           
-          unzip "$FNAME"
+          mkdir "$(<feedname)"
+          unzip "$FNAME" -d "$(<feedname)"
 
       - name: Parse data
         run: |
