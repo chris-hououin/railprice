@@ -20,6 +20,8 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Dependencies
+        run: sudo apt install golang
 
       - name: Download data
         env:
@@ -42,3 +44,10 @@ jobs:
           echo ${FNAME%%.*} >> feedname
           cat feedname
           
+          unzip "$FNAME"
+
+      - name: Parse data
+        run: |
+          go mod download
+          CGO_ENABLED=0 GOOS=linux go build -o railprice
+          railprice "$(<feedname)"
