@@ -138,7 +138,8 @@ function App() {
       <MapContainer center={position} zoom={13} className="map">
         <TileLayer
           attribution='&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors'
-          url="https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}.png"
+          url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+          opacity={0.4}
         />
         <TileLayer
           attribution={'&copy; <a href="https://www.openrailwaymap.org/" target="_blank">OpenRailwayMap</a>, Powered by National Rail Enquiries. This website is a work of fiction. Build ' + document.querySelector('meta[name="build-number"]')?.getAttribute('content')}
@@ -147,8 +148,8 @@ function App() {
         />
         {destPrices.map(
           dest => (
-            (dest.dest.Lat || dest.dest.Long) &&
-              <Marker
+            (dest.dest.Lat || dest.dest.Long) ?
+              (<Marker
                 key={dest.dest.Nlc}
                 position={[dest.dest.Lat, dest.dest.Long]}
                 icon={createColoredMarker(getMarkerColor2(dest.minPrice, possibleDestPrices))}
@@ -167,7 +168,8 @@ function App() {
                     </div>
                   ))}
                 </Popup>
-              </Marker>
+              </Marker>)
+              : null
           )
         )}
         <MapController mapRef={mapRef} />
