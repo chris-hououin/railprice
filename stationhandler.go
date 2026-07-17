@@ -40,7 +40,7 @@ func fetchAllStations() []sta {
 
 func storeStations(stations []sta) {
 	j, _ := json.Marshal(stations)
-	err := os.WriteFile("station.json", j, 0644)
+	err := os.WriteFile("stations.json", j, 0644)
 	if err != nil {
 		panic(err)
 	}

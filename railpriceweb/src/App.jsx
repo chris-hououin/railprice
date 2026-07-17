@@ -141,7 +141,7 @@ function App() {
           url="https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}.png"
         />
         <TileLayer
-          attribution='&copy; <a href="https://www.openrailwaymap.org/" target="_blank">OpenRailwayMap</a>, Powered by National Rail Enquiries. This website is a work of fiction. '
+          attribution={'&copy; <a href="https://www.openrailwaymap.org/" target="_blank">OpenRailwayMap</a>, Powered by National Rail Enquiries. This website is a work of fiction. Build ' + document.querySelector('meta[name="build-number"]')?.getAttribute('content')}
           url="https://tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png"
           opacity={0.6}
         />

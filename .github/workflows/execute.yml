@@ -52,3 +52,27 @@ jobs:
           go mod download
           CGO_ENABLED=0 GOOS=linux go build -o railprice
           ./railprice "$(<feedname)"
+
+      - name: Copy data
+        run: |
+          cp -R ./out ./railpriceweb/public/orig
+          cp ./stations.json ./railpriceweb/public
+
+      - name: Stamp build number 💮
+        env:
+          BUILD_NUMBER: ${{github.run_number}}
+        run: sed -i -- "s/%BUILD_NUMBER%/$(date +'%Y%m%d.%H%M').$BUILD_NUMBER/g" ./railpriceweb/index.html
+
+      - name: Install 🔧
+        run: npm install
+        working-directory: ./railpriceweb
+
+      - name: Build 🏗️
+        run: npm run build
+        working-directory: ./railpriceweb
+
+      - name: Deploy to GH Pages 🚀
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./railpriceweb/dist
