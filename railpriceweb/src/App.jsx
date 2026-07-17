@@ -93,7 +93,17 @@ function App() {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
 
-      return response.json();
+      if (response.headers.get('Content-Encoding') === 'br') {
+        return response.json()
+      } else {
+        const compressedData = await response.blob();
+
+        const ds = new DecompressionStream('brotli');
+        const decompressedStream = compressedData.stream().pipeThrough(ds);
+        const decompressedResponse = new Response(decompressedStream);
+
+        return decompressedResponse.json();
+      }
     }
   })
 
