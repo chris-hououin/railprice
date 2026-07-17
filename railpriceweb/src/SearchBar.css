@@ -1,0 +1,102 @@
+.search-bar {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+  pointer-events: auto;
+  width: 300px;
+}
+
+.search-input {
+  width: 300px;
+  padding: 10px 12px;
+  border: 2px solid #666;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+  background-color: white;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #0066cc;
+  box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.2);
+}
+
+/* Dropdown List */
+.dropdown-list {
+  position: fixed;
+  top: 60px;
+  left: 20px;
+  width: 300px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 0 0 4px 4px;
+  max-height: 400px;
+  overflow-y: auto;
+  z-index: 1001;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-empty {
+  padding: 20px 12px;
+  text-align: center;
+  color: #999;
+  font-size: 13px;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.15s;
+  gap: 8px;
+}
+
+.dropdown-item:hover {
+  background-color: #f5f5f5;
+}
+
+/* Scrollbar styling for dropdown */
+.dropdown-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dropdown-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.dropdown-list::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+.dropdown-list::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.station-name {
+  font-size: 12px;
+  color: #333;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.station-crs {
+  font-size: 12px;
+  color: #999;
+  margin-left: auto;
+}
+
+.station-nlc {
+  font-size: 11px;
+  font-weight: 600;
+  color: #2c3e50;
+  font-family: 'Courier New', monospace;
+  background-color: #f5f5f5;
+  padding: 2px 6px;
+}

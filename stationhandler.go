@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/json"
+	"os"
 	"railprice/client"
 	"sort"
 	"strings"
@@ -34,6 +36,14 @@ func fetchAllStations() []sta {
 		return stations[i].Name < stations[j].Name
 	})
 	return stations
+}
+
+func storeStations(stations []sta) {
+	j, _ := json.Marshal(stations)
+	err := os.WriteFile("station.json", j, 0644)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func fetchNlc(nlc string) []string {

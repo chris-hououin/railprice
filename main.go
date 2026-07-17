@@ -8,26 +8,28 @@ import (
 	"time"
 )
 
+var allStations []sta
+var locations map[string]client.Location
 var flows map[string]client.Flow
 var origFlows map[string][]client.Flow
 var destFlows map[string][]client.Flow
 var fares map[string][]client.Fare
 var clusters []client.Cluster
 var clusterNlcMap map[string][]string
-var locations map[string]client.Location
 var locationGroups map[string][]string
-var stations map[string]client.Station
 var routes map[string]client.Route
+var stations map[string]client.Station
 var ticketTypes map[string]client.TicketType
 var ticketAdvances []client.TicketAdvance
 var ticketValidityRecords map[string]client.TicketValidity
 
 func readFiles(filename string) {
+	locations = client.ReadLocations(filename)
+	allStations = fetchAllStations()
 	flows, fares = client.ReadFlows(filename)
 	origFlows, destFlows = client.MapFlows(flows)
 	clusters = client.ReadClusters(filename)
 	clusterNlcMap = client.MapClusters(clusters)
-	locations = client.ReadLocations(filename)
 	locationGroups = client.MapStationGroups(locations)
 	routes = client.ReadRoutes(filename)
 	ticketAdvances = client.ReadTicketAdvance(filename)
@@ -51,16 +53,13 @@ func main() {
 		panic(err)
 	}
 
-	//for i, s := range fetchAllStations() {
-	//	fmt.Println(i, s.Nlc)
-	//	fetchPricesToFile(s.Nlc)
-	//}
+	storeStations(allStations)
 
 	start := time.Now()
 
 	sem := make(chan struct{}, WORKERS)
 	var wg sync.WaitGroup
-	for i, s := range fetchAllStations() {
+	for i, s := range allStations {
 		wg.Go(func() {
 			sem <- struct{}{}
 			defer func() { <-sem }()
