@@ -24,15 +24,6 @@ const ticketTypes = [
   { key: 'N', label: 'Season' }
 ]
 
-
-// Fix default marker icon
-delete L.Icon.Default.prototype._getIconUrl
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
-})
-
 // Function to create colored marker icon
 const createColoredMarker = (color) => {
   return L.divIcon({
@@ -40,7 +31,7 @@ const createColoredMarker = (color) => {
     iconSize: [20, 20],
     iconAnchor: [10, 10],
     popupAnchor: [0, -10],
-    className: 'custom-div-icon'
+    className: 'map-marker-icon'
   })
 }
 
@@ -53,10 +44,14 @@ function MapController({ mapRef }) {
     mapRef.current = map
   }, [map, mapRef])
 
+  useEffect(() => {
+    const text = `Powered by National Rail Enquiries. This website is a work of fiction. <a href="https://github.com/chris-hououin/railprice" target="_blank">Build ${document.querySelector('meta[name="build-number"]')?.getAttribute('content')}</a>`
+    map?.attributionControl?.addAttribution(text)
+  }, [])
+
   return null
 }
 /* eslint-enable react/prop-types */
-
 
 function App() {
   const position = [51.505, -0.09] // Default center (London)
@@ -145,21 +140,22 @@ function App() {
           ✠
         </button>
       </div>
+
       <MapContainer center={position} zoom={13} className="map">
         <TileLayer
-          attribution='&copy; <a href="https://stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors'
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> contributors'
           url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
           opacity={0.4}
         />
         <TileLayer
-          attribution={'&copy; <a href="https://www.openrailwaymap.org/" target="_blank">OpenRailwayMap</a>, Powered by National Rail Enquiries. This website is a work of fiction. Build ' + document.querySelector('meta[name="build-number"]')?.getAttribute('content')}
+          attribution='&copy; <a href="https://www.openrailwaymap.org/" target="_blank">OpenRailwayMap</a>'
           url="https://tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png"
           opacity={0.6}
         />
         {destPrices.map(
           dest => (
-            (dest.dest.Lat || dest.dest.Long) ?
-              (<Marker
+            !(dest.dest.Lat === 0 && dest.dest.Long === 0) &&
+              <Marker
                 key={dest.dest.Nlc}
                 position={[dest.dest.Lat, dest.dest.Long]}
                 icon={createColoredMarker(getMarkerColor2(dest.minPrice, possibleDestPrices))}
@@ -178,8 +174,7 @@ function App() {
                     </div>
                   ))}
                 </Popup>
-              </Marker>)
-              : null
+              </Marker>
           )
         )}
         <MapController mapRef={mapRef} />
