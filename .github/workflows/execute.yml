@@ -55,7 +55,7 @@ jobs:
 
       - name: Copy data
         run: |
-          cp -R ./out ./railpriceweb/public/orig
+          cp -R ./out/orig ./railpriceweb/public/orig
           cp ./stations.json ./railpriceweb/public
 
       - name: Stamp build number 💮
