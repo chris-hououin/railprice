@@ -63,6 +63,9 @@ jobs:
           BUILD_NUMBER: ${{github.run_number}}
         run: sed -i -- "s/%BUILD_NUMBER%/$(date +'%Y%m%d.%H%M').$BUILD_NUMBER/g" ./railpriceweb/index.html
 
+      - name: Stamp feed name 💮
+        run: sed -i -- "s/%FEED_NAME%/$(<feedname)/g" ./railpriceweb/index.html
+
       - name: Install 🔧
         run: npm install
         working-directory: ./railpriceweb
