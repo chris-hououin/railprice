@@ -46,7 +46,7 @@ func storeStations(stations []sta) {
 	}
 }
 
-func fetchNlc(nlc string) []string {
+func fetchNlcs(nlc string) []string {
 	stationsOrGroups := client.FetchClusterStations(nlc, clusterNlcMap)
 
 	var stations []string

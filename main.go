@@ -68,7 +68,8 @@ func main() {
 			sem <- struct{}{}
 			defer func() { <-sem }()
 			fmt.Println(i, s.Nlc)
-			processOriginationToFile(s.Nlc)
+			processOriginToFile(s.Nlc)
+			processDestinationToFile(s.Nlc)
 		})
 	}
 	wg.Wait()

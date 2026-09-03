@@ -26,9 +26,9 @@ func mapDestinationPrices(myFares []ReversibleFare) map[string]*DestinationPrice
 		//fmt.Println(flows[f.fare.Flowid], f)
 		var dests []string
 		if f.reversed {
-			dests = fetchNlc(flows[f.fare.Flowid].Orig)
+			dests = fetchNlcs(flows[f.fare.Flowid].Orig)
 		} else {
-			dests = fetchNlc(flows[f.fare.Flowid].Dest)
+			dests = fetchNlcs(flows[f.fare.Flowid].Dest)
 		}
 
 		for _, d := range dests {
@@ -47,7 +47,7 @@ func mapDestinationPrices(myFares []ReversibleFare) map[string]*DestinationPrice
 	return myPrices
 }
 
-func fetchFlowIds(myClusterIds []string) map[string]ReversibleFlow {
+func fetchFlowIdsForOrigins(myClusterIds []string) map[string]ReversibleFlow {
 	myFlowIds := make(map[string]ReversibleFlow)
 
 	for _, id := range myClusterIds {
@@ -70,12 +70,12 @@ func fetchFlowIds(myClusterIds []string) map[string]ReversibleFlow {
 	return myFlowIds
 }
 
-func processOriginationToFile(station string) {
+func processOriginToFile(station string) {
 
 	myClusterIds := fetchAllNlcsForStation(station)
 	//fmt.Println("My clusters", time.Since(start), myClusterIds)
 
-	myFlowIds := fetchFlowIds(myClusterIds)
+	myFlowIds := fetchFlowIdsForOrigins(myClusterIds)
 	//fmt.Println("My flows", time.Since(start), len(myFlowIds))
 
 	myFares := fetchFares(myFlowIds)
