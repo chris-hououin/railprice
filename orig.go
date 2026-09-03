@@ -70,7 +70,7 @@ func fetchFlowIds(myClusterIds []string) map[string]ReversibleFlow {
 	return myFlowIds
 }
 
-func fetchPricesToFile(station string) {
+func processOriginationToFile(station string) {
 
 	myClusterIds := fetchAllNlcsForStation(station)
 	//fmt.Println("My clusters", time.Since(start), myClusterIds)

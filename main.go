@@ -48,7 +48,11 @@ func main() {
 	filename := os.Args[1]
 	readFiles(filename)
 
-	err := os.MkdirAll("out", os.ModePerm)
+	err := os.MkdirAll("out/orig", os.ModePerm)
+	if err != nil {
+		panic(err)
+	}
+	err = os.MkdirAll("out/dest", os.ModePerm)
 	if err != nil {
 		panic(err)
 	}
@@ -64,7 +68,7 @@ func main() {
 			sem <- struct{}{}
 			defer func() { <-sem }()
 			fmt.Println(i, s.Nlc)
-			fetchPricesToFile(s.Nlc)
+			processOriginationToFile(s.Nlc)
 		})
 	}
 	wg.Wait()
