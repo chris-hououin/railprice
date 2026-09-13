@@ -15,15 +15,8 @@ import {
 import {getMarkerColor2} from "./GetMarkerColor.jsx";
 import PriceList from './PriceList.jsx'
 import SearchBar from './SearchBar.jsx'
+import Filters from './Filters.jsx'
 import {useLocation, useNavigate, useParams, useSearchParams} from "react-router-dom";
-
-const ticketTypes = [
-  { key: 'A', label: 'Advance' },
-  { key: 'S', label: 'Single' },
-  { key: 'D', label: 'Day Return' },
-  { key: 'P', label: 'Period Return' },
-  { key: 'N', label: 'Season' }
-]
 
 // Function to create colored marker icon
 const createColoredMarker = (color) => {
@@ -46,7 +39,7 @@ function MapController({ mapRef }) {
   }, [map, mapRef])
 
   useEffect(() => {
-    const text = `Powered by National Rail Enquiries. This website is a work of fiction. <a href="https://github.com/chris-hououin/railprice" target="_blank">Build ${document.querySelector('meta[name="build-number"]')?.getAttribute('content')}</a>`
+    const text = `Powered by National Rail Enquiries. This website is a work of fiction. <a href="https://github.com/chris-hououin/railprice" target="_blank">Build ${document.querySelector('meta[name="build-number"]')?.getAttribute('content')}</a> (${document.querySelector('meta[name="feed-name"]')?.getAttribute('content')})`
     map?.attributionControl?.addAttribution(text)
   }, [])
 
@@ -77,12 +70,6 @@ function App({ direction }) {
 
   const navigateToStation = (nlc) => {
     navigate(`/${direction}/${nlc}${search}`)
-  }
-
-  const toggleTicketType = (key) => {
-    setTicketTypeFilter(prev =>
-      prev.includes(key) ? prev.filter(t => t !== key) : [...prev, key]
-    )
   }
 
   const { data: stations = [] } = useQuery({
@@ -135,27 +122,12 @@ function App({ direction }) {
         selectedStation={selectedStation}
         setSelectedStation={navigateToStation}
       />
-      <div className="filters">
-        <div className="ticket-type-tabs">
-          {ticketTypes.map(type => (
-            <button
-              key={type.key}
-              className={`ticket-tab ${ticketTypeFilter.includes(type.key) ? 'active' : ''}`}
-              onClick={() => toggleTicketType(type.key)}
-            >
-              {type.label}
-            </button>
-          ))}
-        </div>
-
-        <button
-          className={`cross-london-btn ${crossLondonFilter ? 'active' : ''}`}
-          onClick={() => setCrossLondonFilter(!crossLondonFilter)}
-          title="Cross London"
-        >
-          ✠
-        </button>
-      </div>
+      <Filters
+        ticketTypeFilter={ticketTypeFilter}
+        setTicketTypeFilter={setTicketTypeFilter}
+        crossLondonFilter={crossLondonFilter}
+        setCrossLondonFilter={setCrossLondonFilter}
+      />
 
       <MapContainer center={position} zoom={13} className="map">
         <TileLayer
