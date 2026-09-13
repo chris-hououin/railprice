@@ -15,6 +15,7 @@ import {
 import {getMarkerColor2} from "./GetMarkerColor.jsx";
 import PriceList from './PriceList.jsx'
 import SearchBar from './SearchBar.jsx'
+import {useLocation, useNavigate, useParams, useSearchParams} from "react-router-dom";
 
 const ticketTypes = [
   { key: 'A', label: 'Advance' },
@@ -53,15 +54,30 @@ function MapController({ mapRef }) {
 }
 /* eslint-enable react/prop-types */
 
-function App() {
+function App({ direction }) {
+  const navigate = useNavigate();
+  const { station } = useParams();
+  const { search } = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+  console.log("station", station);
+  console.log("searchParams", searchParams);
+  const { iRoute, xRoute, iTicket, xTicket } = Object.fromEntries(searchParams.entries())
+
   const position = [51.505, -0.09] // Default center (London)
   const mapRef = useRef(null)
   const markerRefs = useRef({})
 
-  const [selectedStation, setSelectedStation] = useState('7022')
+  const [selectedStation, setSelectedStation] = useState(station)
   const [ticketTypeFilter, setTicketTypeFilter] = useState(['P'])
   const [crossLondonFilter, setCrossLondonFilter] = useState(false)
 
+  useEffect(() => {
+    setSelectedStation(station)
+  }, [station]);
+
+  const navigateToStation = (nlc) => {
+    navigate(`/${direction}/${nlc}${search}`)
+  }
 
   const toggleTicketType = (key) => {
     setTicketTypeFilter(prev =>
@@ -104,7 +120,7 @@ function App() {
 
   console.log("prices", prices);
 
-  const filteredPrices = getFilteredPrices(prices, ticketTypeFilter, crossLondonFilter);
+  const filteredPrices = getFilteredPrices(prices, ticketTypeFilter, crossLondonFilter, iRoute, xRoute, iTicket, xTicket);
   const possiblePrices = getPossiblePrices(filteredPrices);
   const destPrices = getDestPrices(filteredPrices);
   const possibleDestPrices = getPossibleDestPrices(destPrices);
@@ -117,7 +133,7 @@ function App() {
       <SearchBar
         stations={stations}
         selectedStation={selectedStation}
-        setSelectedStation={setSelectedStation}
+        setSelectedStation={navigateToStation}
       />
       <div className="filters">
         <div className="ticket-type-tabs">

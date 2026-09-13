@@ -16,6 +16,13 @@ export const formatTicketType = (type) => {
   }
 }
 
+const parseFilters = (s) => {
+  if (s && s.trim()) {
+    return s.split(',')
+  }
+  return []
+}
+
 export const getPriceTicketType = (price) => {
   if (price.Advance) {
     return 'A'
@@ -32,11 +39,18 @@ export const getPriceTicketType = (price) => {
   }
 }
 
-export const getFilteredPrices = (prices, ticketTypeFilter, crossLondonFilter) => {
+export const getFilteredPrices = (prices, ticketTypeFilter, crossLondonFilter, iRoute, xRoute, iTicket, xTicket) => {
   console.log("getFilteredPrices")
   if (isEmptyObject(prices)) {
     return {};
   }
+
+  const iRouteList = parseFilters(iRoute)
+  const xRouteList = parseFilters(xRoute)
+  const iTicketList = parseFilters(iTicket)
+  const xTicketList = parseFilters(xTicket)
+
+  console.log("filters", ticketTypeFilter, crossLondonFilter, iRouteList, xRouteList, iTicketList, xTicketList)
 
   const filteredDestPrices = { Orig: prices.Orig, Dests: {} }
   Object.entries(prices.Dests).forEach(([nlc, dest]) => {
@@ -45,6 +59,14 @@ export const getFilteredPrices = (prices, ticketTypeFilter, crossLondonFilter) =
       if (!ticketTypeFilter.includes(getPriceTicketType(p))) {
         // filter out
       } else if (crossLondonFilter && p.CrossLondon !== true) {
+        // filter out
+      } else if (iRouteList.length > 0 && !iRouteList.includes(p.RouteCode)) {
+        // filter out
+      } else if (xRouteList.length > 0 && xRouteList.includes(p.RouteCode)) {
+        // filter out
+      } else if (iTicketList.length > 0 && !iTicketList.includes(p.TicketCode)) {
+        // filter out
+      } else if (xTicketList.length > 0 && xTicketList.includes(p.TicketCode)) {
         // filter out
       } else {
         filteredPrices.push(p)
