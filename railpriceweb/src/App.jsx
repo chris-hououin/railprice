@@ -178,7 +178,7 @@ function App({ direction }) {
                 ref={m => { markerRefs.current[dest.dest.Nlc] = m}}
               >
                 <Popup>
-                  <div><a style={{ cursor: "pointer"}} onClick={() => setSelectedStation(dest.dest.Nlc)}><strong>{dest.dest.Name}</strong></a></div>
+                  <div><a style={{ cursor: "pointer"}} onClick={() => navigateToStation(dest.dest.Nlc)}><strong>{dest.dest.Name}</strong></a></div>
                   {dest.prices.map((price, i) => (
                     <div key={'' + dest.dest.nlc + i}>
                       {price.Advance ? '🅰' : ''}
