@@ -1,3 +1,5 @@
+import {ArrowRight, ArrowRightLeft, CalendarDays, ExternalLink, FastForward} from "lucide-react";
+
 const isEmptyObject = obj => {
   return Object.keys(obj).length === 0
 }
@@ -10,11 +12,37 @@ export const formatMoney = (minor) => {
 
 export const formatTicketType = (type) => {
   switch (type) {
-    case 'S': return '➡️';
-    case 'R': return '↔️';
-    case 'N': return '🗓️';
+    case 'S': return <ArrowRight size={14} />;
+    case 'R': return <ArrowRightLeft size={14} />;
+    case 'N': return <CalendarDays size={14} />;
   }
 }
+
+export const advanceIcon = <FastForward size="14" />;
+
+export const formatPriceLine = (station, i, dest, price) =>
+  <div key={'' + dest.dest.nlc + i} style={{ display: 'flex', fontFamily: 'monospace'}}>
+    <div style={{ display: 'inline-flex', alignItems: 'center', marginRight: 'auto'}}>
+      {formatTicketType(price.TicketType)}
+      {price.Advance && advanceIcon}
+      &nbsp;
+      {price.TicketCode}
+      {price.Restriction.trim() && `(${price.Restriction.trim()})`}
+      &nbsp;
+      {price.CrossLondon && '✠'}
+      {price.Route}
+    </div>
+    <div style={{ display: 'inline-flex', alignItems: 'center', textAlign: 'right'}}>
+      &nbsp;
+      {formatMoney(price.Price)}
+      <a
+        href={`https://www.brfares.com/!fares?orig=${station}&dest=${dest.dest.Nlc}`}
+        target={`_blank`}
+      >
+        <ExternalLink size={11} />
+      </a>
+    </div>
+  </div>
 
 const parseFilters = (s) => {
   if (s && s.trim()) {

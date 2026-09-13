@@ -4,8 +4,7 @@ import {useEffect, useRef, useState} from 'react'
 import {useQuery} from '@tanstack/react-query'
 import './App.css'
 import {
-  formatMoney,
-  formatTicketType,
+  formatPriceLine,
   getDestPrices,
   getFilteredPrices,
   getPossibleDestPrices,
@@ -49,10 +48,10 @@ function MapController({ mapRef }) {
 
 function App({ direction }) {
   const navigate = useNavigate();
-  const { station } = useParams();
+  const { station: pathStation } = useParams();
   const { search } = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
-  console.log("station", station);
+  console.log("pathStation", pathStation);
   console.log("searchParams", searchParams);
   const { iRoute, xRoute, iTicket, xTicket } = Object.fromEntries(searchParams.entries())
 
@@ -60,13 +59,13 @@ function App({ direction }) {
   const mapRef = useRef(null)
   const markerRefs = useRef({})
 
-  const [selectedStation, setSelectedStation] = useState(station)
+  const [selectedStation, setSelectedStation] = useState(pathStation)
   const [ticketTypeFilter, setTicketTypeFilter] = useState(['P'])
   const [crossLondonFilter, setCrossLondonFilter] = useState(false)
 
   useEffect(() => {
-    setSelectedStation(station)
-  }, [station]);
+    setSelectedStation(pathStation)
+  }, [pathStation]);
 
   const navigateToStation = (nlc) => {
     navigate(`/${direction}/${nlc}${search}`)
@@ -86,7 +85,7 @@ function App({ direction }) {
   const { data: prices = {}, isLoading: loading, error } = useQuery({
     queryKey: ['prices' + selectedStation],
     queryFn: async () => {
-      const response = await fetch(`orig/${selectedStation}.json.br`)
+      const response = await fetch(`${direction}/${selectedStation}.json.br`)
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
@@ -151,16 +150,9 @@ function App({ direction }) {
               >
                 <Popup>
                   <div><a style={{ cursor: "pointer"}} onClick={() => navigateToStation(dest.dest.Nlc)}><strong>{dest.dest.Name}</strong></a></div>
-                  {dest.prices.map((price, i) => (
-                    <div key={'' + dest.dest.nlc + i}>
-                      {price.Advance ? '🅰' : ''}
-                      {formatTicketType(price.TicketType)}
-                      {price.TicketCode}
-                      {formatMoney(price.Price)}
-                      {price.Route} {price.RouteCode}
-                      {price.CrossLondon ? '✠' : ''}
-                    </div>
-                  ))}
+                  <div style={{ whiteSpace: 'nowrap' }}>
+                    {dest.prices.map((price, i) => formatPriceLine(selectedStation, i, dest, price))}
+                  </div>
                 </Popup>
               </Marker>
           )

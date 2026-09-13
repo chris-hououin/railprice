@@ -1,4 +1,4 @@
-import { formatMoney, formatTicketType } from './utils.jsx'
+import {advanceIcon, formatMoney, formatTicketType} from './utils.jsx'
 import {useEffect, useState} from "react";
 import './PriceList.css'
 
@@ -52,12 +52,25 @@ export default function PriceList({ priceList, possiblePrices, mapRef, markerRef
         {paginatedPriceList.map((price, idx) => (
           <div key={startIndex + idx} className="price-item" onClick={() => handleListItemClick(price, price.dest.Nlc)}>
             <div className="price-item-details">
-              <div className="price-item-name">
-                {price.price.CrossLondon && '✠'} {price.dest.Name} {price.dest.Crs && `(${price.dest.Crs})`}
-                {price.price.Advance ? '🅰' : ''}
-                {formatTicketType(price.price.TicketType)}
+              <div style={{display: 'flex'}}>
+                <div className="price-item-desc" style={{ display: 'inline-flex', alignItems: 'center', marginRight: 'auto' }}>
+                  {formatTicketType(price.price.TicketType)}
+                  {price.price.Advance && advanceIcon}
+                  &nbsp;
+                  {price.price.TicketCode}
+                  {' '}
+                  {price.price.TicketDesc}
+                </div>
+                <div>{formatMoney(price.price.Price)}</div>
+
               </div>
-              <div className="price-item-price">{formatMoney(price.price.Price)} {price.price.Route} ({price.price.RouteCode})</div>
+              <div className="price-item-name">
+                {price.dest.Name} {price.dest.Crs.trim() && `(${price.dest.Crs})`}
+              </div>
+              <div className="price-item-route">
+                {price.price.RouteCode} {price.price.CrossLondon && '✠'} {price.price.Route}
+                {price.price.Restriction.trim() && ` (${price.price.Restriction})`}
+              </div>
             </div>
           </div>
         ))}

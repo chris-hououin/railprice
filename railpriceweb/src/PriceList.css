@@ -64,8 +64,13 @@
   min-width: 0;
 }
 
+.price-item-desc {
+  font-size: 13px;
+  color: #666;
+}
+
 .price-item-name {
-  font-weight: 500;
+  font-weight: 600;
   font-size: 14px;
   color: #333;
   white-space: nowrap;
@@ -78,6 +83,12 @@
   font-size: 13px;
   color: #666;
   font-weight: 600;
+}
+
+.price-item-route {
+  font-size: 13px;
+  color: #666;
+  font-weight: 500;
 }
 
 .title-pager {

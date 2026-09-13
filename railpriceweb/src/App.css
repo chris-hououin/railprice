@@ -6,8 +6,8 @@
   position: relative;
 }
 
-a {
-  text-decoration: underline;
+.leaflet-popup-content {
+  width: fit-content !important;
 }
 
 .map {
