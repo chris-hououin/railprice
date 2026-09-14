@@ -3,7 +3,7 @@
 https://chris-hououin.github.io/railprice/
 
 ### If the website couldn't load
-Use firefox
+Use Firefox
 
 ### If you are colour blind
 Sorry

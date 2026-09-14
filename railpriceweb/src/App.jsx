@@ -5,11 +5,12 @@ import {useQuery} from '@tanstack/react-query'
 import './App.css'
 import {
   formatPriceLine,
-  getDestPrices,
+  getPointPrices,
   getFilteredPrices,
-  getPossibleDestPrices,
+  getPossiblePointPrices,
   getPossiblePrices,
-  getPriceList
+  getPriceList,
+  mapPrices
 } from "./utils.jsx";
 import {getMarkerColor2} from "./GetMarkerColor.jsx";
 import PriceList from './PriceList.jsx'
@@ -106,10 +107,11 @@ function App({ direction }) {
 
   console.log("prices", prices);
 
-  const filteredPrices = getFilteredPrices(prices, ticketTypeFilter, crossLondonFilter, iRoute, xRoute, iTicket, xTicket);
+  const mappedPrices = mapPrices(direction, prices);
+  const filteredPrices = getFilteredPrices(mappedPrices, ticketTypeFilter, crossLondonFilter, iRoute, xRoute, iTicket, xTicket);
   const possiblePrices = getPossiblePrices(filteredPrices);
-  const destPrices = getDestPrices(filteredPrices);
-  const possibleDestPrices = getPossibleDestPrices(destPrices);
+  const pointPrices = getPointPrices(filteredPrices);
+  const possiblePointPrices = getPossiblePointPrices(pointPrices);
   const priceList = getPriceList(filteredPrices);
 
   return (
@@ -139,19 +141,19 @@ function App({ direction }) {
           url="https://tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png"
           opacity={0.6}
         />
-        {destPrices.map(
-          dest => (
-            !(dest.dest.Lat === 0 && dest.dest.Long === 0) &&
+        {pointPrices.map(
+          point => (
+            !(point.point.Lat === 0 && point.point.Long === 0) &&
               <Marker
-                key={dest.dest.Nlc}
-                position={[dest.dest.Lat, dest.dest.Long]}
-                icon={createColoredMarker(getMarkerColor2(dest.minPrice, possibleDestPrices))}
-                ref={m => { markerRefs.current[dest.dest.Nlc] = m}}
+                key={point.point.Nlc}
+                position={[point.point.Lat, point.point.Long]}
+                icon={createColoredMarker(getMarkerColor2(point.minPrice, possiblePointPrices))}
+                ref={m => { markerRefs.current[point.point.Nlc] = m}}
               >
                 <Popup>
-                  <div><a style={{ cursor: "pointer"}} onClick={() => navigateToStation(dest.dest.Nlc)}><strong>{dest.dest.Name}</strong></a></div>
+                  <div><a style={{ cursor: "pointer", whiteSpace: 'nowrap' }} onClick={() => navigateToStation(point.point.Nlc)}><strong>{point.point.Name}</strong></a></div>
                   <div style={{ whiteSpace: 'nowrap' }}>
-                    {dest.prices.map((price, i) => formatPriceLine(selectedStation, i, dest, price))}
+                    {point.prices.map((price, i) => formatPriceLine(selectedStation, i, point, price))}
                   </div>
                 </Popup>
               </Marker>
