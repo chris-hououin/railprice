@@ -84,7 +84,7 @@ function App({ direction }) {
   })
 
   const { data: prices = {}, isLoading: loading, error } = useQuery({
-    queryKey: ['prices' + selectedStation],
+    queryKey: ['prices' + direction + selectedStation],
     queryFn: async () => {
       const response = await fetch(`${direction}/${selectedStation}.json.br`)
       if (!response.ok) {
