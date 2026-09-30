@@ -2,11 +2,9 @@ import {advanceIcon, formatMoney, formatTicketType} from './utils.jsx'
 import {useEffect, useState} from "react";
 import './PriceList.css'
 
-export default function PriceList({ priceList, possiblePrices, mapRef, markerRefs }) {
-
+export default function PriceList({ priceList, possiblePrices, mapRef, markerRefs, showPriceList }) {
 
   const [currentPage, setCurrentPage] = useState(1)
-  const [isVisible, setIsVisible] = useState(true)
   const itemsPerPage = 500
 
   // Pagination for price list
@@ -39,50 +37,51 @@ export default function PriceList({ priceList, possiblePrices, mapRef, markerRef
     }
   }
 
+  if (!showPriceList) {
+    return null
+  }
+
   return (
     <div className="price-list">
       <div className="price-list-title">
-        <button onClick={() => setIsVisible(!isVisible)}>{isVisible ? '−' : '+'}</button>
         <div>Prices ({priceList.length})</div>
         <div className="title-pager">
-          {isVisible && (
-            <>
-              <button onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}>‹</button>
-              <span className="pagination-info">{currentPage} / {totalPages}</span>
-              <button onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>›</button>
-            </>
-          )}
+          <button className="pager-btn" onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} aria-label="Previous page">
+            ‹
+          </button>
+          <span className="pagination-info">{currentPage} / {totalPages}</span>
+          <button className="pager-btn" onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} aria-label="Next page">
+            ›
+          </button>
         </div>
       </div>
-      {isVisible && (
-        <div className="price-list-content">
-          {paginatedPriceList.map((price, idx) => (
-            <div key={startIndex + idx} className="price-item" onClick={() => handleListItemClick(price, price.point.Nlc)}>
-              <div className="price-item-details">
-                <div style={{display: 'flex'}}>
-                  <div className="price-item-desc" style={{ display: 'inline-flex', alignItems: 'center', marginRight: 'auto' }}>
-                    {formatTicketType(price.price.TicketType)}
-                    {price.price.Advance && advanceIcon}
-                    &nbsp;
-                    {price.price.TicketCode}
-                    {' '}
-                    {price.price.TicketDesc}
-                  </div>
-                  <div>{formatMoney(price.price.Price)}</div>
+      <div className="price-list-content">
+        {paginatedPriceList.map((price, idx) => (
+          <div key={startIndex + idx} className="price-item" onClick={() => handleListItemClick(price, price.point.Nlc)}>
+            <div className="price-item-details">
+              <div style={{display: 'flex'}}>
+                <div className="price-item-desc" style={{ display: 'inline-flex', alignItems: 'center', marginRight: 'auto' }}>
+                  {formatTicketType(price.price.TicketType)}
+                  {price.price.Advance && advanceIcon}
+                  &nbsp;
+                  {price.price.TicketCode}
+                  {' '}
+                  {price.price.TicketDesc}
+                </div>
+                <div>{formatMoney(price.price.Price)}</div>
 
-                </div>
-                <div className="price-item-name">
-                  {price.point.Name} {price.point.Crs.trim() && `(${price.point.Crs})`}
-                </div>
-                <div className="price-item-route">
-                  {price.price.RouteCode} {price.price.CrossLondon && '✠'} {price.price.Route}
-                  {price.price.Restriction.trim() && ` (${price.price.Restriction})`}
-                </div>
+              </div>
+              <div className="price-item-name">
+                {price.point.Name} {price.point.Crs.trim() && `(${price.point.Crs})`}
+              </div>
+              <div className="price-item-route">
+                {price.price.RouteCode} {price.price.CrossLondon && '✠'} {price.price.Route}
+                {price.price.Restriction.trim() && ` (${price.price.Restriction})`}
               </div>
             </div>
-          ))}
-        </div>
-      )}
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

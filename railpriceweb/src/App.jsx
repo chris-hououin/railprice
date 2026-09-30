@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import {MapContainer, Marker, Popup, TileLayer, useMap} from 'react-leaflet'
 import L from 'leaflet'
 import {useEffect, useRef, useState} from 'react'
@@ -16,6 +17,8 @@ import {getMarkerColor2} from "./GetMarkerColor.jsx";
 import PriceList from './PriceList.jsx'
 import SearchBar from './SearchBar.jsx'
 import Filters from './Filters.jsx'
+import DirectionTabs from './DirectionTabs.jsx'
+import {SquareText} from 'lucide-react'
 import {useLocation, useNavigate, useParams, useSearchParams} from "react-router-dom";
 
 // Function to create colored marker icon
@@ -51,7 +54,7 @@ function App({ direction }) {
   const navigate = useNavigate();
   const { station: pathStation } = useParams();
   const { search } = useLocation();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   console.log("pathStation", pathStation);
   console.log("searchParams", searchParams);
   const { iRoute, xRoute, iTicket, xTicket } = Object.fromEntries(searchParams.entries())
@@ -63,6 +66,7 @@ function App({ direction }) {
   const [selectedStation, setSelectedStation] = useState(pathStation)
   const [ticketTypeFilter, setTicketTypeFilter] = useState(['P'])
   const [crossLondonFilter, setCrossLondonFilter] = useState(false)
+  const [showPriceList, setShowPriceList] = useState(false)
 
   useEffect(() => {
     setSelectedStation(pathStation)
@@ -70,6 +74,15 @@ function App({ direction }) {
 
   const navigateToStation = (nlc) => {
     navigate(`/${direction}/${nlc}${search}`)
+  }
+
+  const isDestination = direction === 'dest'
+
+  const handleDirectionChange = (nextIsDestination) => {
+    const nextDirection = nextIsDestination ? 'dest' : 'orig'
+    if (nextDirection !== direction) {
+      navigate(`/${nextDirection}/${selectedStation}${search}`)
+    }
   }
 
   const { data: stations = [] } = useQuery({
@@ -118,17 +131,32 @@ function App({ direction }) {
     <div className="app-container">
       {error && <div className="error-toast">{error}</div>}
       {loading && <div className="loading-toast">Loading prices...</div>}
-      <SearchBar
-        stations={stations}
-        selectedStation={selectedStation}
-        setSelectedStation={navigateToStation}
-      />
-      <Filters
-        ticketTypeFilter={ticketTypeFilter}
-        setTicketTypeFilter={setTicketTypeFilter}
-        crossLondonFilter={crossLondonFilter}
-        setCrossLondonFilter={setCrossLondonFilter}
-      />
+      <div className="top-controls">
+        <DirectionTabs
+          isDestination={isDestination}
+          onChange={handleDirectionChange}
+        />
+        <SearchBar
+          stations={stations}
+          selectedStation={selectedStation}
+          setSelectedStation={navigateToStation}
+        />
+        <Filters
+          ticketTypeFilter={ticketTypeFilter}
+          setTicketTypeFilter={setTicketTypeFilter}
+          crossLondonFilter={crossLondonFilter}
+          setCrossLondonFilter={setCrossLondonFilter}
+        />
+        <button
+          type="button"
+          className={`price-list-toggle ${showPriceList ? 'active' : ''}`}
+          onClick={() => setShowPriceList(!showPriceList)}
+          aria-label={showPriceList ? 'Hide price list' : 'Show price list'}
+          title="Price list"
+        >
+          <SquareText size={16} />
+        </button>
+      </div>
 
       <MapContainer center={position} zoom={13} className="map">
         <TileLayer
@@ -153,7 +181,7 @@ function App({ direction }) {
                 <Popup>
                   <div><a style={{ cursor: "pointer", whiteSpace: 'nowrap' }} onClick={() => navigateToStation(point.point.Nlc)}><strong>{point.point.Name}</strong></a></div>
                   <div style={{ whiteSpace: 'nowrap' }}>
-                    {point.prices.map((price, i) => formatPriceLine(selectedStation, i, point, price))}
+                    {point.prices.map((price, i) => formatPriceLine(selectedStation, i, point, price, direction))}
                   </div>
                 </Popup>
               </Marker>
@@ -167,6 +195,7 @@ function App({ direction }) {
         possiblePrices={possiblePrices}
         mapRef={mapRef}
         markerRefs={markerRefs}
+        showPriceList={showPriceList}
       />
 
     </div>

@@ -1,3 +1,4 @@
+import { Button, ToggleButton } from 'react-aria-components'
 import './Filters.css'
 
 const ticketTypes = [
@@ -19,27 +20,30 @@ export default function Filters({
       prev.includes(key) ? prev.filter(t => t !== key) : [...prev, key]
     )
   }
+
   return (
     <div className="filters">
-      <div className="ticket-type-tabs">
+      <div className="ticket-type-tabs" aria-label="Ticket type filters">
         {ticketTypes.map(type => (
-          <button
+          <ToggleButton
             key={type.key}
-            className={`ticket-tab ${ticketTypeFilter.includes(type.key) ? 'active' : ''}`}
-            onClick={() => toggleTicketType(type.key)}
+            className="ticket-tab"
+            isSelected={ticketTypeFilter.includes(type.key)}
+            onChange={() => toggleTicketType(type.key)}
           >
             {type.label}
-          </button>
+          </ToggleButton>
         ))}
       </div>
 
-      <button
+      <Button
         className={`cross-london-btn ${crossLondonFilter ? 'active' : ''}`}
-        onClick={() => setCrossLondonFilter(!crossLondonFilter)}
+        onPress={() => setCrossLondonFilter(!crossLondonFilter)}
+        aria-label="Toggle cross London routes"
         title="Cross London"
       >
         ✠
-      </button>
+      </Button>
     </div>
   )
 }

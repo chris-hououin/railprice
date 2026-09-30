@@ -20,7 +20,7 @@ export const formatTicketType = (type) => {
 
 export const advanceIcon = <FastForward size="14" />;
 
-export const formatPriceLine = (station, i, point, price) =>
+export const formatPriceLine = (station, i, point, price, direction) =>
   <div key={'' + point.point.nlc + i} style={{ display: 'flex', fontFamily: 'monospace'}}>
     <div style={{ display: 'inline-flex', alignItems: 'center', marginRight: 'auto'}}>
       {formatTicketType(price.TicketType)}
@@ -36,7 +36,7 @@ export const formatPriceLine = (station, i, point, price) =>
       &nbsp;
       {formatMoney(price.Price)}
       <a
-        href={`https://www.brfares.com/!fares?orig=${station}&dest=${point.point.Nlc}`}
+        href={`https://www.brfares.com/!fares?orig=${direction === 'orig' ? station : point.point.Nlc}&dest=${direction === 'dest' ? station : point.point.Nlc}`}
         target={`_blank`}
       >
         <ExternalLink size={11} />
