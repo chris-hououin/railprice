@@ -57,7 +57,7 @@ jobs:
         run: |
           cp -R ./out/orig ./railpriceweb/public/orig
           cp -R ./out/dest ./railpriceweb/public/dest
-          cp ./stations.json ./railpriceweb/public
+          cp ./out/stations.json ./railpriceweb/public
 
       - name: Stamp build number 💮
         env:

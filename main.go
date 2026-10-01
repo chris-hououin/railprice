@@ -19,11 +19,14 @@ var clusterNlcMap map[string][]string
 var locationGroups map[string][]string
 var routes map[string]client.Route
 var stations map[string]client.Station
+var extraStations map[string]client.ExtraStation
 var ticketTypes map[string]client.TicketType
 var ticketAdvances []client.TicketAdvance
 var ticketValidityRecords map[string]client.TicketValidity
 
 func readFiles(filename string) {
+	stations = client.ReadStations()
+	extraStations = client.ReadExtraStations()
 	locations = client.ReadLocations(filename)
 	allStations = fetchAllStations()
 	flows, fares = client.ReadFlows(filename)
@@ -35,7 +38,6 @@ func readFiles(filename string) {
 	ticketAdvances = client.ReadTicketAdvance(filename)
 	ticketValidityRecords = client.ReadTicketValidity(filename)
 	ticketTypes = client.ReadTicketType(filename, ticketAdvances, ticketValidityRecords)
-	stations = client.ReadStations()
 }
 
 func main() {

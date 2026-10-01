@@ -18,12 +18,25 @@ type sta struct {
 
 func newSta(nlc string) sta {
 	crs := locations[nlc].Crs
-	return sta{
-		nlc,
-		crs,
-		strings.TrimSpace(locations[nlc].CcDescOut),
-		stations[crs].Lat,
-		stations[crs].Long,
+	stationName := strings.TrimSpace(locations[nlc].CcDescOut)
+	s, exists := stations[crs]
+	if exists {
+		return sta{
+			nlc,
+			crs,
+			stationName,
+			s.Lat,
+			s.Long,
+		}
+	} else {
+		ss := extraStations[nlc]
+		return sta{
+			nlc,
+			crs,
+			stationName,
+			ss.Lat,
+			ss.Long,
+		}
 	}
 }
 
@@ -40,7 +53,7 @@ func fetchAllStations() []sta {
 
 func storeStations(stations []sta) {
 	j, _ := json.Marshal(stations)
-	err := os.WriteFile("stations.json", j, 0644)
+	err := os.WriteFile("out/stations.json", j, 0644)
 	if err != nil {
 		panic(err)
 	}

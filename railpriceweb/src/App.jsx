@@ -32,6 +32,16 @@ const createColoredMarker = (color) => {
   })
 }
 
+const createSelectedStationMarker = () => {
+  return L.divIcon({
+    html: `<div style="width: 54px; height: 54px; background: rgba(255,255,255,0); rgba(239,68,68,0.16); display: flex; align-items: center; justify-content: center; position: relative;"><span style="font-size: 38px; color: #dc2626; line-height: 1; font-weight: 1000; transform: translateY(-1px);">✕</span></div>`,
+    iconSize: [54, 54],
+    iconAnchor: [27, 27],
+    popupAnchor: [0, -27],
+    className: 'selected-station-marker'
+  })
+}
+
 // Custom component to capture map instance
 /* eslint-disable react/prop-types */
 function MapController({ mapRef }) {
@@ -169,6 +179,17 @@ function App({ direction }) {
           url="https://tiles.openrailwaymap.org/standard/{z}/{x}/{y}.png"
           opacity={0.6}
         />
+        {selectedStation && stations.filter(s => s.Nlc === selectedStation).map(s => {
+          if (s.Lat === 0 && s.Long === 0) return null
+          return (
+            <Marker
+              key={`selected-${s.Nlc}`}
+              position={[s.Lat, s.Long]}
+              icon={createSelectedStationMarker()}
+              zIndexOffset={999}
+            />
+          )
+        })}
         {pointPrices.map(
           point => (
             !(point.point.Lat === 0 && point.point.Long === 0) &&
