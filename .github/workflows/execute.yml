@@ -20,8 +20,10 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Dependencies
-        run: sudo apt install golang
+      - name: Setup Go
+        uses: actions/setup-go@v7
+        with:
+          go-version: '1.25'
 
       - name: Download data
         env:
