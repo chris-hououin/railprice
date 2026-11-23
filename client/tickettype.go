@@ -1,6 +1,7 @@
 package client
 
 import (
+	"strconv"
 	"strings"
 )
 
@@ -14,12 +15,12 @@ type TicketType struct {
 	TicketType          string
 	ticketGroup         string
 	lastValidDay        string
-	maxPassengers       string
-	minPassengers       string
-	maxAdults           string
-	minAdults           string
-	maxChildren         string
-	minChildren         string
+	maxPassengers       int
+	minPassengers       int
+	maxAdults           int
+	minAdults           int
+	maxChildren         int
+	minChildren         int
 	restrictedDate      string
 	restrictedTrain     string
 	restrictedArea      string
@@ -37,6 +38,7 @@ type TicketType struct {
 	discountCategory    string
 	IsAdvance           bool
 	IsDay               bool
+	SpecialTicketType   string
 }
 
 func newTicketType(line string, ticketAdvances []TicketAdvance, ticketValidityRecords map[string]TicketValidity) TicketType {
@@ -49,12 +51,12 @@ func newTicketType(line string, ticketAdvances []TicketAdvance, ticketValidityRe
 	ticketType := line[44:45]
 	ticketGroup := line[45:46]
 	lastValidDay := line[46:54]
-	maxPassengers := line[54:57]
-	minPassengers := line[57:60]
-	maxAdults := line[60:63]
-	minAdults := line[63:66]
-	maxChildren := line[66:69]
-	minChildren := line[69:72]
+	maxPassengers, _ := strconv.Atoi(line[54:57])
+	minPassengers, _ := strconv.Atoi(line[57:60])
+	maxAdults, _ := strconv.Atoi(line[60:63])
+	minAdults, _ := strconv.Atoi(line[63:66])
+	maxChildren, _ := strconv.Atoi(line[66:69])
+	minChildren, _ := strconv.Atoi(line[69:72])
 	restrictedDate := line[72:73]
 	restrictedTrain := line[73:74]
 	restrictedArea := line[74:75]
@@ -72,6 +74,7 @@ func newTicketType(line string, ticketAdvances []TicketAdvance, ticketValidityRe
 	discountCategory := line[111:113]
 	isAdvance := determineAdvance(ticketCode, atbDesc, reservationRequired, ticketAdvances)
 	isDay := determineDay(validityCode, ticketValidityRecords)
+	specialTicketType := determineSpecialTicketType(atbDesc, maxAdults)
 	t := TicketType{
 		ticketCode,
 		end,
@@ -105,8 +108,25 @@ func newTicketType(line string, ticketAdvances []TicketAdvance, ticketValidityRe
 		discountCategory,
 		isAdvance,
 		isDay,
+		specialTicketType,
 	}
 	return t
+}
+
+func determineSpecialTicketType(atbDesc string, maxAdults int) string {
+	if strings.Contains(strings.ToUpper(atbDesc), "UPG") {
+		return "UPGRADE"
+	}
+	if strings.Contains(strings.ToUpper(atbDesc), "ITX") {
+		return "ITX"
+	}
+	if strings.Contains(strings.ToUpper(atbDesc), "KEND") {
+		return "WEEKEND"
+	}
+	if maxAdults < 1 {
+		return "CHILD"
+	}
+	return "STANDARD"
 }
 
 func determineDay(validityCode string, ticketValidityRecords map[string]TicketValidity) bool {
