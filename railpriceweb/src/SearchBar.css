@@ -52,6 +52,7 @@
 }
 
 .dropdown-list {
+  z-index: 1000;
   background: #ffffff;
   border: 1px solid rgba(148, 163, 184, 0.85);
   border-radius: 12px;

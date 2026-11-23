@@ -119,7 +119,7 @@ export const mapPrices = (direction, prices) => {
   }
 }
 
-export const getFilteredPrices = (prices, ticketTypeFilter, crossLondonFilter, iRoute, xRoute, iTicket, xTicket) => {
+export const getFilteredPrices = (prices, ticketTypeFilter, crossLondonFilter, iRoute, xRoute, iTicket, xTicket, iSpecial) => {
   if (isEmptyObject(prices)) {
     return {};
   }
@@ -128,8 +128,9 @@ export const getFilteredPrices = (prices, ticketTypeFilter, crossLondonFilter, i
   const xRouteList = parseFilters(xRoute)
   const iTicketList = parseFilters(iTicket)
   const xTicketList = parseFilters(xTicket)
+  const iSpecialList = parseFilters(iSpecial)
 
-  console.log("filters", ticketTypeFilter, crossLondonFilter, iRouteList, xRouteList, iTicketList, xTicketList)
+  console.log("filters", ticketTypeFilter, crossLondonFilter, iRouteList, xRouteList, iTicketList, xTicketList, iSpecialList)
 
   const filteredPointPrices = { Station: prices.Station, Points: {} }
   Object.entries(prices.Points).forEach(([nlc, point]) => {
@@ -146,6 +147,10 @@ export const getFilteredPrices = (prices, ticketTypeFilter, crossLondonFilter, i
       } else if (iTicketList.length > 0 && !iTicketList.includes(p.TicketCode)) {
         // filter out
       } else if (xTicketList.length > 0 && xTicketList.includes(p.TicketCode)) {
+        // filter out
+      } else if (iSpecialList.length === 0 && p.SpecialTicketType !== "STANDARD") {
+        // filter out
+      } else if (iSpecialList.length > 0 && p.SpecialTicketType !== "STANDARD" && !iSpecialList.includes(p.SpecialTicketType)) {
         // filter out
       } else {
         filteredPrices.push(p)

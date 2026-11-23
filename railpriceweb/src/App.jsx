@@ -67,7 +67,7 @@ function App({ direction }) {
   const [searchParams] = useSearchParams();
   console.log("pathStation", pathStation);
   console.log("searchParams", searchParams);
-  const { iRoute, xRoute, iTicket, xTicket } = Object.fromEntries(searchParams.entries())
+  const { iRoute, xRoute, iTicket, xTicket, iSpecial } = Object.fromEntries(searchParams.entries())
 
   const position = [51.505, -0.09] // Default center (London)
   const mapRef = useRef(null)
@@ -131,7 +131,7 @@ function App({ direction }) {
   console.log("prices", prices);
 
   const mappedPrices = mapPrices(direction, prices);
-  const filteredPrices = getFilteredPrices(mappedPrices, ticketTypeFilter, crossLondonFilter, iRoute, xRoute, iTicket, xTicket);
+  const filteredPrices = getFilteredPrices(mappedPrices, ticketTypeFilter, crossLondonFilter, iRoute, xRoute, iTicket, xTicket, iSpecial);
   const possiblePrices = getPossiblePrices(filteredPrices);
   const pointPrices = getPointPrices(filteredPrices);
   const possiblePointPrices = getPossiblePointPrices(pointPrices);
